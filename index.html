@@ -6,6 +6,7 @@
     <title>CODE TEAM | Информационный портал хакатона</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         
@@ -61,6 +62,24 @@
             color: #60a5fa;
             border-color: rgba(59, 130, 246, 0.3);
         }
+
+        /* Обычный CSS для таблицы вместо @apply */
+        .admin-table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #6b7280;
+            border-bottom-width: 1px;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .admin-table td {
+            padding: 1rem;
+            font-size: 0.875rem;
+            border-bottom-width: 1px;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -71,7 +90,7 @@
     <header class="fixed top-0 w-full z-50 glass border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20 cursor-pointer" onclick="switchTab('main')">
                     <i class="fas fa-terminal text-white"></i>
                 </div>
                 <div>
@@ -86,8 +105,8 @@
                 <button onclick="switchTab('submit')" id="btn-submit" class="nav-btn px-4 py-2 rounded-lg text-sm font-bold transition border border-transparent bg-blue-600/10 text-blue-400">Сдать работу</button>
             </nav>
 
-            <div class="mono text-[10px] text-gray-500 bg-white/5 px-3 py-1.5 rounded border border-white/5">
-                STATUS: ACTIVE
+            <div id="connection-status" class="mono text-[10px] text-gray-500 bg-white/5 px-3 py-1.5 rounded border border-white/5 transition-all">
+                CONNECTING...
             </div>
         </div>
     </header>
@@ -152,7 +171,7 @@
                             </div>
                         </div>
                         
-                        <div class="flex items-start space-x-4 p-5 bg-white/5 rounded-2xl border border-white/5">
+                        <div class="flex items-start space-x-4 p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-blue-500/30 transition-colors">
                             <div class="w-10 h-10 rounded-xl bg-blue-600 flex-shrink-0 flex items-center justify-center shadow-lg shadow-blue-600/20">
                                 <i class="fas fa-map-marked-alt text-white"></i>
                             </div>
@@ -162,7 +181,7 @@
                             </div>
                         </div>
 
-                        <div class="flex items-start space-x-4 p-5 bg-white/5 rounded-2xl border border-white/5">
+                        <div class="flex items-start space-x-4 p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-blue-500/30 transition-colors">
                             <div class="w-10 h-10 rounded-xl bg-green-600 flex-shrink-0 flex items-center justify-center shadow-lg shadow-green-600/20">
                                 <i class="fas fa-medal text-white"></i>
                             </div>
@@ -206,7 +225,6 @@
                             <i class="fab fa-github mr-2"></i> Ссылка на GitHub
                         </label>
                         <input type="url" id="githubLink" required placeholder="https://github.com/..." class="w-full px-5 py-4 rounded-xl input-glass text-white border-blue-500/20 focus:border-blue-500">
-                        <p class="text-[10px] text-gray-600 mt-1 ml-1">Для разработчиков: убедитесь, что репозиторий публичный.</p>
                     </div>
 
                     <div>
@@ -214,11 +232,10 @@
                             <i class="fab fa-figma mr-2"></i> Ссылка на Figma
                         </label>
                         <input type="url" id="figmaLink" required placeholder="https://www.figma.com/file/..." class="w-full px-5 py-4 rounded-xl input-glass text-white border-purple-500/20 focus:border-purple-500">
-                        <p class="text-[10px] text-gray-600 mt-1 ml-1">Для дизайнеров: предоставьте доступ на чтение (Can view).</p>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center space-x-3 group">
+                <button type="submit" id="submitBtn" class="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center space-x-3 group disabled:opacity-50">
                     <span>ЗАФИКСИРОВАТЬ РЕЗУЛЬТАТ</span>
                     <i class="fas fa-check-circle group-hover:scale-110 transition-transform"></i>
                 </button>
@@ -229,41 +246,207 @@
                     <i class="fas fa-rocket text-green-500 text-2xl"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-2">Проект принят!</h3>
-                <p class="text-gray-400">Ваша работа успешно зарегистрирована. Готовьтесь к презентации.</p>
-                <button onclick="location.reload()" class="mt-6 text-sm text-blue-400 hover:underline">Изменить данные</button>
+                <p class="text-gray-400">Ваша работа успешно зарегистрирована в базе данных. Готовьтесь к презентации.</p>
+                <button onclick="location.reload()" class="mt-6 text-sm text-blue-400 hover:underline">Отправить ещё одну работу</button>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА: АДМИН ПАНЕЛЬ (СКРЫТА) -->
+        <div id="tab-admin" class="tab-content max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-4xl font-black mb-2 uppercase">Список присланных работ</h2>
+                    <p class="text-gray-500">Здесь отображаются все отправленные формы в реальном времени</p>
+                </div>
+                <button id="exportBtn" class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-bold hover:bg-white/10 transition">
+                    ЭКСПОРТ В CSV
+                </button>
+            </div>
+
+            <div class="glass rounded-3xl overflow-hidden overflow-x-auto">
+                <table class="w-full admin-table min-w-[800px]">
+                    <thead>
+                        <tr>
+                            <th>Время</th>
+                            <th>Команда</th>
+                            <th>Группа</th>
+                            <th>Капитан</th>
+                            <th>GitHub</th>
+                            <th>Figma</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-data-list">
+                        <tr>
+                            <td colspan="6" class="text-center py-20 text-gray-600">Загрузка данных из базы...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
     </main>
 
-    <footer class="mt-20 border-t border-white/5 py-10 text-center">
+    <footer class="mt-20 border-t border-white/5 py-10 text-center relative">
         <p class="text-gray-600 text-[10px] uppercase tracking-[0.3em] font-bold">
             CODE TEAM • КИГМ 23 • 2026
         </p>
+        <button id="adminLoginBtn" class="mt-4 opacity-0 hover:opacity-100 text-[8px] text-gray-800 transition-opacity">
+            ADMIN PANEL
+        </button>
     </footer>
 
-    <script>
-        function switchTab(tabId) {
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Config
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'hackathon-portal-kigm';
+
+        let currentUser = null;
+        let allSubmissions = [];
+
+        // Auth
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth error:", error);
+                document.getElementById('connection-status').innerText = 'STATUS: OFFLINE';
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('connection-status').innerText = 'STATUS: CONNECTED';
+                document.getElementById('connection-status').classList.replace('text-gray-500', 'text-green-500');
+                if (document.getElementById('tab-admin').classList.contains('active')) {
+                    loadAdminData();
+                }
+            }
+        });
+
+        initAuth();
+
+        // Navigation
+        window.switchTab = function(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
-            document.getElementById('tab-' + tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        document.getElementById('submitForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = this.querySelector('button');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> <span>РЕГИСТРАЦИЯ...</span>';
+            const targetTab = document.getElementById('tab-' + tabId);
+            const targetBtn = document.getElementById('btn-' + tabId);
             
-            // Имитация отправки данных
-            setTimeout(() => {
+            if (targetTab) targetTab.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (tabId === 'admin') loadAdminData();
+        };
+
+        // Admin Access
+        document.getElementById('adminLoginBtn').addEventListener('click', () => {
+            prompt("Введите пароль администратора:");
+            window.switchTab('admin');
+        });
+
+        // Form Submission
+        document.getElementById('submitForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch animate-spin"></i> <span>СОХРАНЕНИЕ...</span>';
+
+            const payload = {
+                teamName: document.getElementById('teamName').value,
+                groupName: document.getElementById('groupName').value,
+                captainName: document.getElementById('captainName').value,
+                githubLink: document.getElementById('githubLink').value,
+                figmaLink: document.getElementById('figmaLink').value,
+                timestamp: new Date().toISOString(),
+                userId: currentUser.uid
+            };
+
+            try {
+                const submissionsCol = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
+                await addDoc(submissionsCol, payload);
+                
                 this.style.display = 'none';
                 document.getElementById('successMessage').classList.remove('hidden');
-            }, 1500);
+            } catch (error) {
+                console.error("Submit error:", error);
+                btn.disabled = false;
+                btn.innerHTML = '<span>ОШИБКА: ПОВТОРИТЬ</span>';
+            }
         });
+
+        // Data Management
+        function loadAdminData() {
+            if (!currentUser) return;
+            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'submissions'));
+
+            onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('admin-data-list');
+                list.innerHTML = '';
+                allSubmissions = [];
+
+                if (snapshot.empty) {
+                    list.innerHTML = '<tr><td colspan="6" class="text-center py-20 text-gray-500">Работ пока нет</td></tr>';
+                    return;
+                }
+
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    allSubmissions.push(data);
+                    const date = new Date(data.timestamp).toLocaleString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><span class="text-gray-500 mono text-[10px]">${date}</span></td>
+                        <td><span class="font-bold text-blue-400">${escapeHtml(data.teamName)}</span></td>
+                        <td>${escapeHtml(data.groupName)}</td>
+                        <td>${escapeHtml(data.captainName)}</td>
+                        <td><a href="${data.githubLink}" target="_blank" class="text-blue-500 hover:underline"><i class="fab fa-github"></i> Link</a></td>
+                        <td><a href="${data.figmaLink}" target="_blank" class="text-purple-500 hover:underline"><i class="fab fa-figma"></i> Link</a></td>
+                    `;
+                    list.appendChild(row);
+                });
+            }, (error) => {
+                console.error("Firestore Error:", error);
+            });
+        }
+
+        // Export
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            if (allSubmissions.length === 0) return;
+            let csv = "Timestamp,Team,Group,Captain,GitHub,Figma\n";
+            allSubmissions.forEach(s => {
+                csv += `"${s.timestamp}","${s.teamName}","${s.groupName}","${s.captainName}","${s.githubLink}","${s.figmaLink}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'submissions.csv';
+            a.click();
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 </body>
 </html>
