@@ -101,7 +101,6 @@
             <div class="hidden md:flex items-center gap-8">
                 <button onclick="switchTab('home')" id="btn-home-nav" class="nav-link text-sm font-medium transition-colors py-2 active">Главная</button>
                 <button onclick="switchTab('submit')" id="btn-submit-nav" class="nav-link text-sm font-medium transition-colors py-2">Подать проект</button>
-                <button onclick="requestAdmin()" id="btn-admin-nav" class="nav-link text-sm font-medium transition-colors py-2">Жюри</button>
             </div>
         </div>
     </nav>
@@ -281,9 +280,14 @@
                     </h2>
                     <p class="text-slate-500 text-sm">Список всех поданных решений на Студкод 2026</p>
                 </div>
-                <div id="stats" class="bg-blue-500/10 text-blue-500 px-4 py-2 rounded-lg font-mono text-sm border border-blue-500/20 flex items-center gap-2">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Всего заявок: 0</span>
+                <div class="flex items-center gap-4">
+                    <div id="stats" class="bg-blue-500/10 text-blue-500 px-4 py-2 rounded-lg font-mono text-sm border border-blue-500/20 flex items-center gap-2">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Всего заявок: 0</span>
+                    </div>
+                    <button onclick="switchTab('home')" class="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 rounded-lg text-sm font-medium transition-all border border-slate-600/50 flex items-center gap-2">
+                        <i class="fas fa-sign-out-alt"></i> Выход
+                    </button>
                 </div>
             </div>
 
